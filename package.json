@@ -8,9 +8,21 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "check-lint": "eslint \"**/*.{mjs,cjs,js,ts,jsx,tsx,astro}\" --max-warnings=0",
+    "lint": "yarn check-types && yarn check-lint && yarn format",
+    "format": "prettier --write  \"**/*.{mjs,cjs,js,jsx,ts,tsx,md,mdx,astro}\" --loglevel=warn"
   },
   "dependencies": {
     "astro": "^2.7.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^5.60.0",
+    "eslint": "^8.43.0",
+    "eslint-plugin-astro": "^0.27.2",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "prettier": "^2.8.8",
+    "prettier-plugin-astro": "^0.10.0",
+    "typescript": "^5.0.4"
   }
 }
