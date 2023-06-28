@@ -17,6 +17,12 @@ jobs:
       - name: Checkout your repository
         uses: actions/checkout@v3
 
+      - name: Make .env file
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_SITE_URL: ${{ vars.SITE_URL }}
+          envkey_SITE_BASE: ${{ vars.SITE_BASE }}
+
       - name: Install, build, and upload your site
         uses: withastro/action@v0
         with:
