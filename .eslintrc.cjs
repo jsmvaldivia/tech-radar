@@ -20,5 +20,11 @@ module.exports = {
       },
       rules: {},
     },
+    {
+      files: ["src/env.d.ts"],
+      rules: {
+        "no-unused-vars": "off",
+      },
+    },
   ],
 };
