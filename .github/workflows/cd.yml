@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -20,8 +20,8 @@ jobs:
       - name: Make .env file
         uses: SpicyPizza/create-envfile@v2.0
         with:
-          INPUT_ENVKEY_SITE_URL: ${{ vars.SITE_URL }}
-          INPUT_ENVKEY_SITE_BASE: ${{ vars.SITE_BASE }}
+          envkey_SITE_URL: ${{ vars.SITE_URL }}
+          envkey_SITE_BASE: ${{ vars.SITE_BASE }}
 
       - name: Debug
         run: |
