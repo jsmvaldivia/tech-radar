@@ -1,14 +1,14 @@
 import { defineConfig } from "astro/config";
+import { loadEnv } from "vite";
 
-console.log(
-  "environment variables directly on astro.config.mjs",
-  import.meta.env
-);
+const MODE = process.env.NODE_ENV;
+const isDevelopment = MODE === "development";
+const { SITE_URL, SITE_BASE } = loadEnv(MODE, process.cwd(), "");
 
 /**
  * @see  https://astro.build/config
  */
 export default defineConfig({
-  site: import.meta.env.SITE_URL,
-  base: import.meta.env.SITE_BASE,
+  site: isDevelopment ? undefined : SITE_URL,
+  base: isDevelopment ? "/" : SITE_BASE,
 });
