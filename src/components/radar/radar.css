@@ -1,0 +1,117 @@
+* {
+    box-sizing: border-box;
+    font-family: "Verdana", monospace;
+  }
+  
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #b4a0e5;
+  }
+  
+  :root {
+    --rings-ammount: 4;
+  }
+  
+  .quadrant-wrapper {
+    width: 600px;
+    height: 600px;
+    overflow: hidden;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    transition: gap 200ms linear;
+    gap: 15px;
+  }
+  
+  .quadrant-wrapper:hover {
+    gap: 20px;  
+  }
+  
+  .quadrant {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .quadrant-2 {
+    transform: rotate(90deg);
+  }
+  
+  .quadrant-3 {
+    transform: rotate(-90deg);
+  }
+  
+  .quadrant-4 {
+    transform: rotate(-180deg);
+  }
+  
+  .new-ring {
+    position: absolute;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: white;
+    top: calc(100% / var(--rings-ammount) * var(--ring-position));
+    left: calc(100% / var(--rings-ammount) * var(--ring-position));
+  }
+  
+  .new-ring-1 {
+    background-color: yellow;
+    width: 200%;
+    height: 200%;
+  }
+  
+  .new-ring-2 {
+    background-color: orange;
+    width: 150%;
+    height: 150%;
+  }
+  
+  .new-ring-3 {
+    background-color: blue;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .new-ring-4 {
+    background-color: greenyellow;
+    width: 50%;
+    height: 50%;
+  }
+  
+  .new-ring:hover {
+    filter: brightness(95%);
+  }
+  
+  .blip {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: #000000;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+  }
+  
+  .tooltip {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    transform: translate(-50%, calc((100% + 8px)*-1));
+    transition: all .2s ease-in-out;
+  }
+  .blip:hover .tooltip {
+    visibility: visible;
+  }

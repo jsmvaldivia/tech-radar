@@ -14,9 +14,11 @@
     "format": "prettier --write  \"**/*.{mjs,cjs,js,jsx,ts,tsx,md,mdx,astro}\" --loglevel=warn"
   },
   "dependencies": {
-    "astro": "^2.7.0"
+    "astro": "^2.7.0",
+    "d3": "^7.8.5"
   },
   "devDependencies": {
+    "@types/d3": "^7.8.5",
     "@typescript-eslint/parser": "^5.60.0",
     "eslint": "^8.43.0",
     "eslint-plugin-astro": "^0.27.2",
