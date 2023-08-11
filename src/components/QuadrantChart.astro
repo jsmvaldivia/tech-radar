@@ -1,0 +1,238 @@
+<div class="tech-radar">
+  <div class="ring ring1">
+    <div class="tag">Hold</div>
+  </div>
+  <div class="ring ring2">
+    <div class="tag">Assess</div>
+  </div>
+  <div class="ring ring3">
+    <div class="tag">Trial</div>
+  </div>
+  <div class="ring ring4">
+    <div class="tag">Adopt</div>
+  </div>
+</div>
+
+<style>
+  .tech-radar {
+    position: relative;
+    width: 600px;
+    height: 600px;
+  }
+
+  .tech-radar::before {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background-color: #fff;
+    top: 0;
+    left: 50%;
+  }
+
+  .tech-radar::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: #fff;
+    top: 50%;
+    left: 0;
+  }
+
+  .ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+
+  .ring::before {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background-color: #fff;
+    top: 0;
+    left: 50%;
+  }
+
+  .ring:hover {
+    filter: brightness(95%);
+  }
+
+  .ring:hover .tag {
+    opacity: 1;
+  }
+
+  .ring4 {
+    background-color: #1abc9c;
+    width: 25%;
+    height: 25%;
+  }
+
+  .ring3 {
+    background-color: #3498db;
+    width: 50%;
+    height: 50%;
+  }
+
+  .ring2 {
+    background-color: #f1c40f;
+    width: 75%;
+    height: 75%;
+  }
+
+  .ring1 {
+    background-color: #e74c3c;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #fff;
+  }
+
+  :global(.blip) {
+    --blip-size: 10px;
+
+    position: absolute;
+    width: var(--blip-size);
+    height: var(--blip-size);
+    background-color: pink;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+
+  :global(.blip:hover .tooltip) {
+    visibility: visible;
+  }
+
+  :global(.tooltip) {
+    visibility: hidden;
+    min-width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    transform: translate(-50%, calc((100% + var(--blip-size)) * -1));
+    transition: all 0.2s ease-in-out;
+    z-index: 1;
+  }
+
+  .tag {
+    position: absolute;
+    background-color: #fff;
+    padding: 2px 8px;
+    transform: translate(-50%, -50%);
+    top: 0;
+    left: 50%;
+    opacity: 0.5;
+  }
+</style>
+
+<script>
+  console.log("running..");
+  const techRadar = document.querySelector(".tech-radar");
+
+  function createBlip(x: number, y: number, text: string) {
+    const blip = document.createElement("div");
+    blip.className = "blip";
+    blip.style.left = `${x}px`;
+    blip.style.top = `${y}px`;
+
+    const tooltip = document.createElement("span");
+    tooltip.className = "tooltip";
+    tooltip.textContent = text;
+    blip.appendChild(tooltip);
+
+    techRadar?.appendChild(blip);
+  }
+
+  function calculateBlipPositionInArc(
+    cx: number,
+    cy: number,
+    radius: number,
+    angle: number
+  ) {
+    const x = cx + radius * Math.cos(angle);
+    const y = cy + radius * Math.sin(angle);
+
+    console.log({
+      cos: Math.cos(angle),
+      sin: Math.sin(angle),
+    });
+
+    return { x, y };
+  }
+
+  function calculateCenterCoordinates(diameter: number) {
+    const containerSize = 600;
+    const centerX = containerSize / 2;
+    const centerY = containerSize / 2;
+
+    return { centerX, centerY };
+  }
+
+  function calculateRadius(diameter: number) {
+    return diameter / 2;
+  }
+
+  const degreeToRadians = (degree: number) => degree * (Math.PI / 180);
+
+  type Data = {
+    text: string;
+    quadrant: number;
+    circle: 1 | 2 | 3 | 4;
+  };
+
+  const DATA: Data[] = [
+    {
+      text: "React",
+      quadrant: 1,
+      circle: 1,
+    },
+    {
+      text: "JS",
+      quadrant: 1,
+      circle: 1,
+    },
+    {
+      text: "CSS",
+      quadrant: 1,
+      circle: 2,
+    },
+  ];
+
+  const DIAMETERS: Record<number, number> = {
+    1: 150,
+    2: 300,
+    3: 450,
+    4: 600,
+  };
+
+  DATA.forEach(({ text, circle }) => {
+    console.log(text, circle);
+    const diameter = DIAMETERS[circle];
+    const angleInDegres = Math.round(Math.random() * 90);
+    const angle = degreeToRadians(angleInDegres);
+    const { centerX, centerY } = calculateCenterCoordinates(diameter);
+    const radius = calculateRadius(diameter);
+    console.log({ centerX, centerY, diameter, angle, radius });
+
+    const { x, y } = calculateBlipPositionInArc(
+      centerX,
+      centerY,
+      radius,
+      angle
+    );
+
+    createBlip(x, y, text);
+  });
+</script>
