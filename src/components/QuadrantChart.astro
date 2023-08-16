@@ -158,10 +158,11 @@
     cx: number,
     cy: number,
     radius: number,
-    angle: number
+    angle: number,
+    shift: number
   ) {
-    const x = cx + radius * Math.cos(angle);
-    const y = cy + radius * Math.sin(angle);
+    const x = cx + radius * Math.cos(angle + shift);
+    const y = cy + radius * Math.sin(angle + shift);
 
     console.log({
       cos: Math.cos(angle),
@@ -171,7 +172,7 @@
     return { x, y };
   }
 
-  function calculateCenterCoordinates(diameter: number) {
+  function calculateCenterCoordinates() {
     const containerSize = 600;
     const centerX = containerSize / 2;
     const centerY = containerSize / 2;
@@ -183,29 +184,58 @@
     return diameter / 2;
   }
 
-  const degreeToRadians = (degree: number) => degree * (Math.PI / 180);
+  function degreeToRadians(degree: number) {
+    return (degree * Math.PI) / 180;
+  }
+
+  function pointBetween(min: number, max: number, amount: number) {
+    return amount * (max - min) + min;
+  }
+
+  function getMatchingQuadrant(quadrant: number) {
+    /**
+     * The quadrants configuration goes from top left -> top right -> bottom right -> bototm left - in summary, clockwise.
+     * To match the configuration quadrant with the quadrant in the radar, it's necessary to follow the table:
+     * quadrant from configuration | corresponding quadrand in the radar
+     * 1 | 2
+     * 4 | 1
+     * 2 | 3
+     * 3 | 4
+     */
+    return [2, 3, 4, 1].at(quadrant - 1) ?? 0;
+  }
 
   type Data = {
     text: string;
     quadrant: number;
-    circle: 1 | 2 | 3 | 4;
+    ring: 1 | 2 | 3 | 4;
   };
 
   const DATA: Data[] = [
     {
       text: "React",
-      quadrant: 1,
-      circle: 1,
+      quadrant: 4,
+      ring: 1,
     },
     {
       text: "JS",
-      quadrant: 1,
-      circle: 1,
+      quadrant: 2,
+      ring: 1,
     },
     {
       text: "CSS",
+      quadrant: 3,
+      ring: 2,
+    },
+    {
+      text: "Java",
       quadrant: 1,
-      circle: 2,
+      ring: 3,
+    },
+    {
+      text: "Astro",
+      quadrant: 1,
+      ring: 4,
     },
   ];
 
@@ -216,20 +246,29 @@
     4: 600,
   };
 
-  DATA.forEach(({ text, circle }) => {
-    console.log(text, circle);
-    const diameter = DIAMETERS[circle];
+  const { centerX, centerY } = calculateCenterCoordinates();
+
+  DATA.forEach(({ text, ring, quadrant }) => {
+    const diameter = DIAMETERS[ring];
+    const previousDiameter = ring === 1 ? 0 : DIAMETERS[ring - 1];
     const angleInDegres = Math.round(Math.random() * 90);
     const angle = degreeToRadians(angleInDegres);
-    const { centerX, centerY } = calculateCenterCoordinates(diameter);
     const radius = calculateRadius(diameter);
-    console.log({ centerX, centerY, diameter, angle, radius });
+    const previousRingRadius = calculateRadius(previousDiameter);
+
+    const randomRadius = pointBetween(
+      previousRingRadius,
+      radius,
+      Math.random()
+    );
+    const shift = (Math.PI * getMatchingQuadrant(quadrant)) / 2;
 
     const { x, y } = calculateBlipPositionInArc(
       centerX,
       centerY,
-      radius,
-      angle
+      randomRadius,
+      angle,
+      shift
     );
 
     createBlip(x, y, text);
