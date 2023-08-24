@@ -104,7 +104,6 @@
     border-radius: 50%;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
     cursor: pointer;
   }
 
@@ -158,16 +157,10 @@
     cx: number,
     cy: number,
     radius: number,
-    angle: number,
-    shift: number
+    angle: number
   ) {
-    const x = cx + radius * Math.cos(angle + shift);
-    const y = cy + radius * Math.sin(angle + shift);
-
-    console.log({
-      cos: Math.cos(angle),
-      sin: Math.sin(angle),
-    });
+    const x = cx + radius * Math.cos(angle);
+    const y = cy + radius * Math.sin(angle);
 
     return { x, y };
   }
@@ -190,19 +183,6 @@
 
   function pointBetween(min: number, max: number, amount: number) {
     return amount * (max - min) + min;
-  }
-
-  function getMatchingQuadrant(quadrant: number) {
-    /**
-     * The quadrants configuration goes from top left -> top right -> bottom right -> bototm left - in summary, clockwise.
-     * To match the configuration quadrant with the quadrant in the radar, it's necessary to follow the table:
-     * quadrant from configuration | corresponding quadrand in the radar
-     * 1 | 2
-     * 4 | 1
-     * 2 | 3
-     * 3 | 4
-     */
-    return [2, 3, 4, 1].at(quadrant - 1) ?? 0;
   }
 
   type Data = {
@@ -246,29 +226,41 @@
     4: 600,
   };
 
+  const QUADRANT_ANGLES: Record<number, [number, number]> = {
+    1: [180, 270],
+    2: [270, 360],
+    3: [0, 90],
+    4: [90, 180],
+  };
+
   const { centerX, centerY } = calculateCenterCoordinates();
 
   DATA.forEach(({ text, ring, quadrant }) => {
     const diameter = DIAMETERS[ring];
-    const previousDiameter = ring === 1 ? 0 : DIAMETERS[ring - 1];
-    const angleInDegres = Math.round(Math.random() * 90);
-    const angle = degreeToRadians(angleInDegres);
-    const radius = calculateRadius(diameter);
-    const previousRingRadius = calculateRadius(previousDiameter);
+    const diameterPreviousRing = ring === 1 ? 0 : DIAMETERS[ring - 1];
+    const blipDiameter = 0.1;
 
-    const randomRadius = pointBetween(
-      previousRingRadius,
-      radius,
+    const [startAngle, endAngle] = QUADRANT_ANGLES[quadrant];
+    const angleInDegres = pointBetween(
+      startAngle + blipDiameter,
+      endAngle - blipDiameter,
       Math.random()
     );
-    const shift = (Math.PI * getMatchingQuadrant(quadrant)) / 2;
+    const angle = degreeToRadians(angleInDegres);
+    const radius = calculateRadius(diameter);
+    const radiusPreviousRing = calculateRadius(diameterPreviousRing);
+
+    const randomRadius = pointBetween(
+      radiusPreviousRing + blipDiameter,
+      radius - blipDiameter,
+      Math.random()
+    );
 
     const { x, y } = calculateBlipPositionInArc(
       centerX,
       centerY,
       randomRadius,
-      angle,
-      shift
+      angle
     );
 
     createBlip(x, y, text);
