@@ -33,10 +33,12 @@ const { title } = Astro.props;
       #da62c4 30%,
       white 60%
     );
+
+    --primary: #284a41;
   }
   html {
     font-family: system-ui, sans-serif;
-    background-color: #f6f6f6;
+    background-color: var(--primary);
   }
   code {
     font-family: Menlo, Monaco, Lucida Console, Liberation Mono,

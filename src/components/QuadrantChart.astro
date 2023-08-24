@@ -1,0 +1,319 @@
+---
+const initialContainerSize = 600;
+---
+
+<div class="tech-radar">
+  <div class="ring ring1">
+    <div class="tag">Hold</div>
+  </div>
+  <div class="ring ring2">
+    <div class="tag">Assess</div>
+  </div>
+  <div class="ring ring3">
+    <div class="tag">Trial</div>
+  </div>
+  <div class="ring ring4">
+    <div class="tag">Adopt</div>
+  </div>
+</div>
+
+<style define:vars={{ size: initialContainerSize }}>
+  .tech-radar {
+    position: relative;
+    width: calc(var(--size) * 1px);
+    height: calc(var(--size) * 1px);
+  }
+
+  .tech-radar::before {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background-color: #fff;
+    top: 0;
+    left: 50%;
+  }
+
+  .tech-radar::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: #fff;
+    top: 50%;
+    left: 0;
+  }
+
+  .ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+
+  .ring::before {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background-color: #fff;
+    top: 0;
+    left: 50%;
+  }
+
+  .ring:hover {
+    filter: brightness(95%);
+  }
+
+  .ring:hover .tag {
+    opacity: 1;
+  }
+
+  .ring4 {
+    background-color: #1abc9c;
+    width: 25%;
+    height: 25%;
+  }
+
+  .ring3 {
+    background-color: #3498db;
+    width: 50%;
+    height: 50%;
+  }
+
+  .ring2 {
+    background-color: #f1c40f;
+    width: 75%;
+    height: 75%;
+  }
+
+  .ring1 {
+    background-color: #e74c3c;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #fff;
+  }
+
+  :global(.blip) {
+    --blip-size: 10px;
+
+    position: absolute;
+    width: var(--blip-size);
+    height: var(--blip-size);
+    background-color: pink;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    cursor: pointer;
+  }
+
+  :global(.blip:hover .tooltip) {
+    visibility: visible;
+  }
+
+  :global(.tooltip) {
+    visibility: hidden;
+    min-width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    transform: translate(-50%, calc((100% + var(--blip-size)) * -1));
+    transition: all 0.2s ease-in-out;
+    z-index: 1;
+  }
+
+  .tag {
+    position: absolute;
+    background-color: #fff;
+    padding: 2px 8px;
+    transform: translate(-50%, -50%);
+    top: 0;
+    left: 50%;
+    opacity: 0.5;
+  }
+</style>
+
+<script>
+  const techRadar = document.querySelector(
+    ".tech-radar"
+  ) as HTMLDivElement | null;
+  const containerSize = Number(techRadar?.style.getPropertyValue("--size"));
+
+  function createBlip({ x, y, text }: Blip) {
+    const blip = document.createElement("div");
+    blip.className = "blip";
+    blip.style.left = `${x}px`;
+    blip.style.top = `${y}px`;
+
+    const tooltip = document.createElement("span");
+    tooltip.className = "tooltip";
+    tooltip.textContent = text;
+    blip.appendChild(tooltip);
+
+    techRadar?.appendChild(blip);
+  }
+
+  function calculateBlipPositionInArc(
+    cx: number,
+    cy: number,
+    radius: number,
+    angle: number
+  ) {
+    const x = cx + radius * Math.cos(angle);
+    const y = cy + radius * Math.sin(angle);
+
+    return { x, y };
+  }
+
+  function calculateCenterCoordinates() {
+    const centerX = containerSize / 2;
+    const centerY = containerSize / 2;
+
+    return { centerX, centerY };
+  }
+
+  function calculateRadius(diameter: number) {
+    return diameter / 2;
+  }
+
+  function degreeToRadians(degree: number) {
+    return (degree * Math.PI) / 180;
+  }
+
+  function pointBetween(min: number, max: number, amount: number) {
+    return amount * (max - min) + min;
+  }
+
+  function checkDistanceBetweenDots(
+    coordinatesA: Coordinates,
+    coordinatesB: Coordinates
+  ) {
+    const a = coordinatesB.x - coordinatesA.x;
+    const b = coordinatesB.y - coordinatesB.y;
+
+    return Math.sqrt(a * a + b * b);
+  }
+
+  type Data = {
+    text: string;
+    quadrant: number;
+    ring: 1 | 2 | 3 | 4;
+  };
+
+  type Coordinates = { x: number; y: number };
+
+  type Blip = Data & Coordinates;
+
+  const DATA: Data[] = [
+    {
+      text: "React",
+      quadrant: 4,
+      ring: 1,
+    },
+    {
+      text: "Solid JS",
+      quadrant: 4,
+      ring: 1,
+    },
+    {
+      text: "JS",
+      quadrant: 4,
+      ring: 1,
+    },
+    {
+      text: "CSS",
+      quadrant: 4,
+      ring: 2,
+    },
+    {
+      text: "Java",
+      quadrant: 4,
+      ring: 3,
+    },
+    {
+      text: "Astro",
+      quadrant: 1,
+      ring: 4,
+    },
+  ];
+
+  const amountOfRings = 4;
+  const distanceBetweenRings = containerSize / amountOfRings;
+  const angleOffset = 10;
+  const blipDiameter = 10;
+
+  const DIAMETERS: Record<number, number> = {
+    1: distanceBetweenRings * 1,
+    2: distanceBetweenRings * 2,
+    3: distanceBetweenRings * 3,
+    4: distanceBetweenRings * 4,
+  };
+
+  const QUADRANT_ANGLES: Record<number, [number, number]> = {
+    1: [180, 270],
+    2: [270, 360],
+    3: [0, 90],
+    4: [90, 180],
+  };
+
+  function calculateCoordinates(ring: number, quadrant: number) {
+    const diameter = DIAMETERS[ring];
+    const diameterPreviousRing = ring === 1 ? 0 : DIAMETERS[ring - 1];
+    const [startAngle, endAngle] = QUADRANT_ANGLES[quadrant];
+    const angle = degreeToRadians(
+      pointBetween(
+        startAngle + angleOffset,
+        endAngle - angleOffset,
+        Math.random()
+      )
+    );
+    const radius = calculateRadius(diameter);
+    const radiusPreviousRing = calculateRadius(diameterPreviousRing);
+    const randomRadius = pointBetween(
+      radiusPreviousRing + blipDiameter,
+      radius - blipDiameter,
+      Math.random()
+    );
+    const { centerX, centerY } = calculateCenterCoordinates();
+
+    return calculateBlipPositionInArc(centerX, centerY, randomRadius, angle);
+  }
+
+  const blips = DATA.reduce(
+    (updatedBlips: Blip[], { ring, quadrant, text }) => {
+      let hasAnyBlipColliding = false;
+
+      do {
+        let coordinates: { x: number; y: number } = calculateCoordinates(
+          ring,
+          quadrant
+        );
+
+        hasAnyBlipColliding = updatedBlips.some(
+          (blip) => checkDistanceBetweenDots(coordinates, blip) < blipDiameter
+        );
+
+        if (!hasAnyBlipColliding) {
+          updatedBlips.push({
+            ...coordinates,
+            ring,
+            quadrant,
+            text,
+          });
+        }
+      } while (hasAnyBlipColliding);
+
+      return updatedBlips;
+    },
+    []
+  );
+
+  blips.forEach(createBlip);
+</script>
