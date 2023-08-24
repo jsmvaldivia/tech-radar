@@ -1,3 +1,7 @@
+---
+const initialContainerSize = 600;
+---
+
 <div class="tech-radar">
   <div class="ring ring1">
     <div class="tag">Hold</div>
@@ -13,11 +17,11 @@
   </div>
 </div>
 
-<style>
+<style define:vars={{ size: initialContainerSize }}>
   .tech-radar {
     position: relative;
-    width: 600px;
-    height: 600px;
+    width: calc(var(--size) * 1px);
+    height: calc(var(--size) * 1px);
   }
 
   .tech-radar::before {
@@ -137,9 +141,12 @@
 </style>
 
 <script>
-  const techRadar = document.querySelector(".tech-radar");
+  const techRadar = document.querySelector(
+    ".tech-radar"
+  ) as HTMLDivElement | null;
+  const containerSize = Number(techRadar?.style.getPropertyValue("--size"));
 
-  function createBlip(x: number, y: number, text: string) {
+  function createBlip({ x, y, text }: Blip) {
     const blip = document.createElement("div");
     blip.className = "blip";
     blip.style.left = `${x}px`;
@@ -166,7 +173,6 @@
   }
 
   function calculateCenterCoordinates() {
-    const containerSize = 600;
     const centerX = containerSize / 2;
     const centerY = containerSize / 2;
 
@@ -185,11 +191,25 @@
     return amount * (max - min) + min;
   }
 
+  function checkDistanceBetweenDots(
+    coordinatesA: Coordinates,
+    coordinatesB: Coordinates
+  ) {
+    const a = coordinatesB.x - coordinatesA.x;
+    const b = coordinatesB.y - coordinatesB.y;
+
+    return Math.sqrt(a * a + b * b);
+  }
+
   type Data = {
     text: string;
     quadrant: number;
     ring: 1 | 2 | 3 | 4;
   };
+
+  type Coordinates = { x: number; y: number };
+
+  type Blip = Data & Coordinates;
 
   const DATA: Data[] = [
     {
@@ -198,18 +218,23 @@
       ring: 1,
     },
     {
+      text: "Solid JS",
+      quadrant: 4,
+      ring: 1,
+    },
+    {
       text: "JS",
-      quadrant: 2,
+      quadrant: 4,
       ring: 1,
     },
     {
       text: "CSS",
-      quadrant: 3,
+      quadrant: 4,
       ring: 2,
     },
     {
       text: "Java",
-      quadrant: 1,
+      quadrant: 4,
       ring: 3,
     },
     {
@@ -219,11 +244,16 @@
     },
   ];
 
+  const amountOfRings = 4;
+  const distanceBetweenRings = containerSize / amountOfRings;
+  const angleOffset = 10;
+  const blipDiameter = 10;
+
   const DIAMETERS: Record<number, number> = {
-    1: 150,
-    2: 300,
-    3: 450,
-    4: 600,
+    1: distanceBetweenRings * 1,
+    2: distanceBetweenRings * 2,
+    3: distanceBetweenRings * 3,
+    4: distanceBetweenRings * 4,
   };
 
   const QUADRANT_ANGLES: Record<number, [number, number]> = {
@@ -233,36 +263,57 @@
     4: [90, 180],
   };
 
-  const { centerX, centerY } = calculateCenterCoordinates();
-
-  DATA.forEach(({ text, ring, quadrant }) => {
+  function calculateCoordinates(ring: number, quadrant: number) {
     const diameter = DIAMETERS[ring];
     const diameterPreviousRing = ring === 1 ? 0 : DIAMETERS[ring - 1];
-    const blipDiameter = 0.1;
-
     const [startAngle, endAngle] = QUADRANT_ANGLES[quadrant];
-    const angleInDegres = pointBetween(
-      startAngle + blipDiameter,
-      endAngle - blipDiameter,
-      Math.random()
+    const angle = degreeToRadians(
+      pointBetween(
+        startAngle + angleOffset,
+        endAngle - angleOffset,
+        Math.random()
+      )
     );
-    const angle = degreeToRadians(angleInDegres);
     const radius = calculateRadius(diameter);
     const radiusPreviousRing = calculateRadius(diameterPreviousRing);
-
     const randomRadius = pointBetween(
       radiusPreviousRing + blipDiameter,
       radius - blipDiameter,
       Math.random()
     );
+    const { centerX, centerY } = calculateCenterCoordinates();
 
-    const { x, y } = calculateBlipPositionInArc(
-      centerX,
-      centerY,
-      randomRadius,
-      angle
-    );
+    return calculateBlipPositionInArc(centerX, centerY, randomRadius, angle);
+  }
 
-    createBlip(x, y, text);
-  });
+  const blips = DATA.reduce(
+    (updatedBlips: Blip[], { ring, quadrant, text }) => {
+      let hasAnyBlipColliding = false;
+
+      do {
+        let coordinates: { x: number; y: number } = calculateCoordinates(
+          ring,
+          quadrant
+        );
+
+        hasAnyBlipColliding = updatedBlips.some(
+          (blip) => checkDistanceBetweenDots(coordinates, blip) < blipDiameter
+        );
+
+        if (!hasAnyBlipColliding) {
+          updatedBlips.push({
+            ...coordinates,
+            ring,
+            quadrant,
+            text,
+          });
+        }
+      } while (hasAnyBlipColliding);
+
+      return updatedBlips;
+    },
+    []
+  );
+
+  blips.forEach(createBlip);
 </script>
