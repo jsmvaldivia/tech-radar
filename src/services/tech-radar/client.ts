@@ -2,7 +2,7 @@ export interface TechRadarClient {
   getTechRadarTechs(): Promise<RadarTech[]>;
 }
 
-interface RadarTech {
+export interface RadarTech {
   name: string;
   quadrant: string;
   ring: string;
