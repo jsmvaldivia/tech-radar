@@ -1,4 +1,4 @@
-interface TechRadarClient {
+export interface TechRadarClient {
   getTechRadarTechs(): Promise<RadarTech[]>;
 }
 
