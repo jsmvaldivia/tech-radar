@@ -1,8 +1,9 @@
-import { FileTechRadarClient } from "src/services/tech-radar/file";
+import { FileTechRadarClient } from "@services/tech-radar/file";
+import type { RadarBlip } from "@services/tech-radar/client";
 import { expect, test } from "vitest";
 
 test("When calling the FileTechRadarClient obtain a list of Radar Techs", () => {
-  const radarTechs: RadarTech[] = [
+  const radarTechs: RadarBlip[] = [
     {
       name: "Spring Boot",
       quadrant: "Languages and Frameworks",
@@ -29,8 +30,8 @@ test("When calling the FileTechRadarClient obtain a list of Radar Techs", () => 
     },
   ];
 
-  const client = new FileTechRadarClient("test_radarTechs.json");
-  client.getTechRadarTechs().then((techs) => {
+  const client = new FileTechRadarClient("fixture/test_radarTechs.json");
+  client.getTechRadarBlips().then((techs) => {
     expect(techs.length).toEqual(2);
     expect(techs).toEqual(radarTechs);
   });

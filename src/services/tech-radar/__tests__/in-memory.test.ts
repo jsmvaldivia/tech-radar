@@ -1,8 +1,9 @@
-import { InMemoryTechRadarClient } from "src/services/tech-radar/in-memory";
+import { InMemoryTechRadarClient } from "@services/tech-radar/in-memory";
+import type { RadarBlip } from "@services/tech-radar/client";
 import { expect, test } from "vitest";
 
 test("When calling the InMemoryTechRadarClient obtain a list of Radar Techs", () => {
-  const radarTechs: RadarTech[] = [
+  const radarTechs: RadarBlip[] = [
     {
       name: "Spring Boot",
       quadrant: "Languages and Frameworks",
@@ -18,8 +19,8 @@ test("When calling the InMemoryTechRadarClient obtain a list of Radar Techs", ()
   ];
 
   const client = new InMemoryTechRadarClient(radarTechs);
-  client.getTechRadarTechs().then((techs) => {
-    expect(techs.length).toEqual(1);
-    expect(techs).toEqual(radarTechs);
+  client.getTechRadarBlips().then((blips) => {
+    expect(blips.length).toEqual(1);
+    expect(blips).toEqual(radarTechs);
   });
 });

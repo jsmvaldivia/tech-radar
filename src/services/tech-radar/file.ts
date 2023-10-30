@@ -1,16 +1,18 @@
 import * as fs from "fs";
+import type { RadarBlip, TechRadarClient } from "@services/tech-radar/client";
 
 export class FileTechRadarClient implements TechRadarClient {
   constructor(private path: string) {}
 
-  getTechRadarTechs(): Promise<RadarTech[]> {
-    const jsonString = fs.readFileSync(this.path, "utf8");
+  getTechRadarBlips(): Promise<RadarBlip[]> {
+    console.log("cwd", process.cwd());
+    const json = fs.readFileSync(this.path, "utf8");
     try {
-      const radarTechs: RadarTech[] = JSON.parse(jsonString);
+      const radarTechs: RadarBlip[] = JSON.parse(json);
       return Promise.resolve(radarTechs);
-    } catch (e) {
-      console.error("Error parsing JSON string: ", e);
-      return Promise.reject(e);
+    } catch (error) {
+      console.error("Error parsing JSON string: ", error);
+      return Promise.reject(error);
     }
   }
 }

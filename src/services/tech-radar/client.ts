@@ -1,8 +1,8 @@
 export interface TechRadarClient {
-  getTechRadarTechs(): Promise<RadarTech[]>;
+  getTechRadarBlips(): Promise<RadarBlip[]>;
 }
 
-export interface RadarTech {
+export interface RadarBlip {
   name: string;
   quadrant: string;
   ring: string;
