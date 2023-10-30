@@ -11,10 +11,13 @@
     "check-types": "tsc --noEmit",
     "check-lint": "eslint \"**/*.{mjs,cjs,js,ts,jsx,tsx,astro}\" --max-warnings=0",
     "lint": "yarn check-types && yarn check-lint && yarn format",
-    "format": "prettier --write  \"**/*.{mjs,cjs,js,jsx,ts,tsx,md,mdx,astro}\" --loglevel=warn"
+    "format": "prettier --write  \"**/*.{mjs,cjs,js,jsx,ts,tsx,md,mdx,astro}\" --loglevel=warn",
+    "test": "vitest --run",
+    "test:watch": "vitest --watch",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "astro": "^2.7.0"
+    "astro": "3.4.0"
   },
   "devDependencies": {
     "@typescript-eslint/parser": "^5.60.0",
@@ -23,6 +26,7 @@
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "prettier": "^2.8.8",
     "prettier-plugin-astro": "^0.10.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "vitest": "^0.34.6"
   }
 }

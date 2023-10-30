@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Spring Boot",
+        "quadrant": "Languages and Frameworks",
+        "ring": "Adopt",
+        "isNew": false,
+        "notes": "This is a note",
+        "createdAt": "2021-01-01",
+        "createdBy": "me",
+        "modifiedAt": "2021-01-01",
+        "modifiedBy": "me",
+        "state": "active"
+    },
+    {
+        "name": "React",
+        "quadrant": "Languages and Frameworks",
+        "ring": "Trial",
+        "isNew": false,
+        "notes": "This is a note",
+        "createdAt": "2021-01-01",
+        "createdBy": "me",
+        "modifiedAt": "2021-01-01",
+        "modifiedBy": "me",
+        "state": "active"
+    }
+]
